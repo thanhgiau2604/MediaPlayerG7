@@ -35,7 +35,6 @@ public class ListsongActivity extends AppCompatActivity {
         setContentView(R.layout.activity_listsong);
         AddControls();
         AddEvents();
-
     }
 
     private void AddEvents() {

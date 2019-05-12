@@ -2,7 +2,6 @@ package group7.android.adapter;
 
 import android.app.Activity;
 import android.content.ContentValues;
-import android.database.sqlite.SQLiteDatabase;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,6 +66,7 @@ public class MusicAdapter extends ArrayAdapter<Music>{
         });
         return row;
     }
+    //Xử lý khi chọn không thích bài hát
     private void xuLyKhongThich(Music music) {
         btnDislike.setVisibility(View.INVISIBLE);
         btnLike.setVisibility(View.VISIBLE);
@@ -74,7 +74,7 @@ public class MusicAdapter extends ArrayAdapter<Music>{
         row.put("favorite",false);
         ListsongActivity.database.update("music",row,"idsong=?",new String[]{music.getIdsong()});
     }
-
+    //Xử lý chọn thich bài hát
     private void xuLyThich(Music music) {
         btnDislike.setVisibility(View.VISIBLE);
         btnLike.setVisibility(View.INVISIBLE);
