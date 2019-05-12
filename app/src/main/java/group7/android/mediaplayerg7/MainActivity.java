@@ -3,6 +3,7 @@ package group7.android.mediaplayerg7;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -22,10 +23,12 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    String DATABASE_NAME = "dbmediaplayer.sqlite";
+    public  static String DATABASE_NAME = "dbmediaplayer.sqlite";
     String DB_PATH_SUFFIX = "/databases/";
 
     TextView txtListSong, txtListPlaylist, txtListFSong;
+
+    public  static SQLiteDatabase database = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
         AddControls();
         AddEvents();
         xuLySaoChepSQLTuAssetVaoHeThongMobile();
+        MoKetNoiCSDL();
     }
 
     //Kiểm tra và yêu cầu quyền truy cập bộ nhớ điện thoại
@@ -106,6 +110,13 @@ public class MainActivity extends AppCompatActivity {
 
     private String layDuongDanLuuTru() {
         return getApplicationInfo().dataDir+DB_PATH_SUFFIX+DATABASE_NAME;
+    }
+
+
+    private void MoKetNoiCSDL()
+    {
+        //Bước 1: mở CSDL
+        database = openOrCreateDatabase(DATABASE_NAME,MODE_PRIVATE,null);
     }
 
     private void AddControls() {

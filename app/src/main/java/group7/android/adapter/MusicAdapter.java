@@ -8,10 +8,13 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
+import group7.android.mediaplayerg7.ListfavsongActivity;
 import group7.android.mediaplayerg7.ListsongActivity;
+import group7.android.mediaplayerg7.MainActivity;
 import group7.android.model.Music;
 import group7.android.mediaplayerg7.R;
 
@@ -39,7 +42,7 @@ public class MusicAdapter extends ArrayAdapter<Music>{
 
         final Music music = this.objects.get(position);
         txtNameSong.setText(music.getNamesong());
-        txtNameArtist.setText(String.valueOf(music.getFavorite()));
+        txtNameArtist.setText(String.valueOf(music.getArtist()));
 
         if (music.getFavorite()){
             btnLike.setVisibility(View.INVISIBLE);
@@ -68,18 +71,23 @@ public class MusicAdapter extends ArrayAdapter<Music>{
     }
     //Xử lý khi chọn không thích bài hát
     private void xuLyKhongThich(Music music) {
+        music.setFavorite(false);
         btnDislike.setVisibility(View.INVISIBLE);
         btnLike.setVisibility(View.VISIBLE);
         ContentValues row = new ContentValues();
         row.put("favorite",false);
-        ListsongActivity.database.update("music",row,"idsong=?",new String[]{music.getIdsong()});
+        MainActivity.database.update("music",row,"idsong=?",new String[]{music.getIdsong()});
+        notifyDataSetChanged();
+        ListfavsongActivity.LayDuLieuBaiHatYeuThichTuCSDL();
     }
     //Xử lý chọn thich bài hát
     private void xuLyThich(Music music) {
+        music.setFavorite(true);
         btnDislike.setVisibility(View.VISIBLE);
         btnLike.setVisibility(View.INVISIBLE);
         ContentValues row = new ContentValues();
         row.put("favorite",true);
-        ListsongActivity.database.update("music",row,"idsong=?",new String[]{music.getIdsong()});
+        MainActivity.database.update("music",row,"idsong=?",new String[]{music.getIdsong()});
+        notifyDataSetChanged();
     }
 }

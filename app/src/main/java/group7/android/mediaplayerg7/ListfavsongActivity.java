@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -14,11 +15,8 @@ import group7.android.model.Music;
 public class ListfavsongActivity extends AppCompatActivity {
 
     ListView lvBaiHatYeuThich;
-    ArrayList<Music> dsBaiHatYeuThich;
-    MusicAdapter adapterBaiHatYeuThich;
-    SQLiteDatabase database = null;
-
-    String DATABASE_NAME = "dbmediaplayer.sqlite";
+    public static ArrayList<Music> dsBaiHatYeuThich;
+    public static MusicAdapter adapterBaiHatYeuThich;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,14 +34,13 @@ public class ListfavsongActivity extends AppCompatActivity {
         dsBaiHatYeuThich = new ArrayList<>();
         adapterBaiHatYeuThich = new MusicAdapter(ListfavsongActivity.this,R.layout.itemlistsong,dsBaiHatYeuThich);
         lvBaiHatYeuThich.setAdapter(adapterBaiHatYeuThich);
+        LayDuLieuBaiHatYeuThichTuCSDL();
     }
 
-    private void LayDuLieuBaiHatYeuThichTuCSDL()
+    public static void LayDuLieuBaiHatYeuThichTuCSDL()
     {
-        //Bước 1: mở CSDL
-        database = openOrCreateDatabase(DATABASE_NAME,MODE_PRIVATE,null);
-        Cursor cursor = database.query("music",null,"favorite=?",new String[] {"true"},null,null,null);
 
+        Cursor cursor = MainActivity.database.query("music",null,"favorite=?",new String[] {"1"},null,null,null);
         dsBaiHatYeuThich.clear();
 
         while (cursor.moveToNext())
@@ -53,7 +50,7 @@ public class ListfavsongActivity extends AppCompatActivity {
             music.setNamesong(cursor.getString(1));
             music.setArtist(cursor.getString(2));
             music.setAlbum(cursor.getString(3));
-            Boolean bool = Boolean.valueOf(cursor.getString(4));
+            Boolean bool = cursor.getInt(4)>0;
             music.setFavorite(bool);
             dsBaiHatYeuThich.add(music);
         }
