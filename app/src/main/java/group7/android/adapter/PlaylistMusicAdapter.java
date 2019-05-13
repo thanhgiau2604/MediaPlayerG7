@@ -8,20 +8,23 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
+import group7.android.mediaplayerg7.ListfavsongActivity;
+import group7.android.mediaplayerg7.ListsongActivity;
 import group7.android.mediaplayerg7.MainActivity;
 import group7.android.model.Music;
 import group7.android.mediaplayerg7.R;
 
-public class MusicAdapter extends ArrayAdapter<Music>{
+public class PlaylistMusicAdapter extends ArrayAdapter<Music>{
     Activity context;
     int resource;
     List<Music> objects;
-    ImageButton btnLike, btnDislike;
+    ImageButton btnLike, btnDislike, btnDelete;
 
-    public MusicAdapter(Activity context, int resource, List<Music> objects) {
+    public PlaylistMusicAdapter(Activity context, int resource, List<Music> objects) {
         super(context, resource, objects);
         this.context=context;
         this.resource=resource;
@@ -36,7 +39,8 @@ public class MusicAdapter extends ArrayAdapter<Music>{
         TextView txtNameArtist = row.<TextView>findViewById(R.id.txtNameArtist);
         btnLike = row.<ImageButton>findViewById(R.id.btnlike);
         btnDislike = row.<ImageButton>findViewById(R.id.btndislike);
-
+        btnDelete = row.<ImageButton>findViewById(R.id.btndelsong);
+        
         final Music music = this.objects.get(position);
         txtNameSong.setText(music.getNamesong());
         txtNameArtist.setText(String.valueOf(music.getArtist()));
@@ -64,8 +68,21 @@ public class MusicAdapter extends ArrayAdapter<Music>{
                 xuLyKhongThich(music);
             }
         });
+        
+        btnDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                xuLyXoaBaiHatKhoiPlaylist();
+            }
+        });
+        
         return row;
     }
+
+    private void xuLyXoaBaiHatKhoiPlaylist() {
+
+    }
+
     //Xử lý khi chọn không thích bài hát
     private void xuLyKhongThich(Music music) {
         music.setFavorite(false);
@@ -75,7 +92,7 @@ public class MusicAdapter extends ArrayAdapter<Music>{
         row.put("favorite",false);
         MainActivity.database.update("music",row,"idsong=?",new String[]{music.getIdsong()});
         notifyDataSetChanged();
-        /*ListfavsongActivity.LayDuLieuBaiHatYeuThichTuCSDL();*/
+        ListfavsongActivity.LayDuLieuBaiHatYeuThichTuCSDL();
     }
     //Xử lý chọn thich bài hát
     private void xuLyThich(Music music) {
@@ -86,6 +103,5 @@ public class MusicAdapter extends ArrayAdapter<Music>{
         row.put("favorite",true);
         MainActivity.database.update("music",row,"idsong=?",new String[]{music.getIdsong()});
         notifyDataSetChanged();
-       /* ListfavsongActivity.LayDuLieuBaiHatYeuThichTuCSDL();*/
     }
 }
