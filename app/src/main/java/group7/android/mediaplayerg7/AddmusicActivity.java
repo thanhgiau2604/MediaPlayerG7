@@ -119,11 +119,9 @@ public class AddmusicActivity extends AppCompatActivity {
         Cursor cursor = MainActivity.database.query("music",null,null,null,null,null,null);
         while (cursor.moveToNext())
         {
-            Toast.makeText(AddmusicActivity.this, "Return falsee rồi", Toast.LENGTH_SHORT).show();
             cursor.close();
             return false;
         }
-        Toast.makeText(AddmusicActivity.this, "Return trueeee rồi", Toast.LENGTH_SHORT).show();
         cursor.close();
         return true;
     }

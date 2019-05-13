@@ -8,6 +8,7 @@ import android.media.Image;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -63,6 +64,15 @@ public class ListplaylistActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 xuLyThemPlaylist();
+            }
+        });
+        lvPlaylist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Playlist playlist = dsPlaylist.get(position);
+                Intent intent = new Intent(ListplaylistActivity.this,SonginplaylistActivity.class);
+                intent.putExtra("idplaylist",playlist.getIdplaylist());
+                startActivity(intent);
             }
         });
     }
