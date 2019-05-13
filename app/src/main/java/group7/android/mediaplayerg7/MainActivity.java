@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
             try
             {
                 CopyDatabaseFromAsset();
-                Toast.makeText(this,"Sao chép CSDL vào hệ thống thành công",Toast.LENGTH_LONG).show();
+                /*Toast.makeText(this,"Sao chép CSDL vào hệ thống thành công",Toast.LENGTH_LONG).show();*/
             }
             catch (Exception e)
             {

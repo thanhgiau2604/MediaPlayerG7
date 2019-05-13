@@ -85,9 +85,7 @@ public class ListplaylistActivity extends AppCompatActivity {
                 row.put("idplaylist",idplaylist);
                 row.put("nameplaylist",txtNamePlaylist.getText().toString());
                 row.put("count",0);
-                Toast.makeText(ListplaylistActivity.this, "id pl = "+idplaylist, Toast.LENGTH_LONG).show();
                 long r = MainActivity.database.insert("playlist",null,row);
-                Toast.makeText(ListplaylistActivity.this, " Da insert playlist r= "+r, Toast.LENGTH_LONG).show();
                //Mở màn hình mới
                 Intent intent = new Intent(ListplaylistActivity.this,AddmusicActivity.class);
                 intent.putExtra("nameplaylist",txtNamePlaylist.getText().toString());

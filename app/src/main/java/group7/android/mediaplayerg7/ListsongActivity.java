@@ -141,11 +141,9 @@ public class ListsongActivity extends AppCompatActivity implements AdapterView.O
         Cursor cursor = MainActivity.database.query("music",null,null,null,null,null,null);
         while (cursor.moveToNext())
         {
-            Toast.makeText(ListsongActivity.this, "Return falsee rồi", Toast.LENGTH_SHORT).show();
             cursor.close();
             return false;
         }
-        Toast.makeText(ListsongActivity.this, "Return trueeee rồi", Toast.LENGTH_SHORT).show();
         cursor.close();
         return true;
     }

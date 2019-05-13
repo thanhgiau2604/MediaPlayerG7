@@ -53,6 +53,7 @@ public class AddMusicAdapter extends ArrayAdapter<Music> {
         TextView txtNameArtist = row.<TextView>findViewById(R.id.txtTenCaSi);
         btnAddMusic = row.<ImageButton>findViewById(R.id.btnaddmusic);
         btnAdded = row.<ImageButton>findViewById(R.id.btnadded);
+
         final Music music = this.objects.get(position);
         final int pos = position;
         txtNameSong.setText(music.getNamesong());
@@ -80,6 +81,7 @@ public class AddMusicAdapter extends ArrayAdapter<Music> {
                 xuLyDaThemNhac(music,pos);
             }
         });
+
         return row;
     }
 
@@ -94,13 +96,11 @@ public class AddMusicAdapter extends ArrayAdapter<Music> {
         MainActivity.database.insert("detailplaylist",null,row);
         //Lấy số lượng bài hát trong playlist để cập nhật
         ContentValues row1 = new ContentValues();
-        Toast.makeText(context, "adapter = "+AddmusicActivity.idpl, Toast.LENGTH_SHORT).show();
         Cursor cursor = MainActivity.database.query("playlist",null,"idplaylist=?",new String[] {AddmusicActivity.idpl},null,null,null);
         int curcount=-1;
         while (cursor.moveToNext())
         {
             curcount = cursor.getInt(2);
-            Toast.makeText(context, "count = "+String.valueOf(curcount), Toast.LENGTH_SHORT).show();
         }
         //Update lại bảng Playlist
         ContentValues row2 = new ContentValues();
