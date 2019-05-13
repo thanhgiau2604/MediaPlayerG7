@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -29,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
     TextView txtListSong, txtListPlaylist, txtListFSong;
 
     public  static SQLiteDatabase database = null;
+
+    public static boolean DA_CHON_TAB_YEU_THICH = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,6 +122,10 @@ public class MainActivity extends AppCompatActivity {
         database = openOrCreateDatabase(DATABASE_NAME,MODE_PRIVATE,null);
     }
 
+    //
+
+    //
+
     private void AddControls() {
         txtListSong = (TextView)findViewById(R.id.txtlistsong);
         txtListPlaylist = (TextView)findViewById(R.id.txtlistplaylist);
@@ -146,6 +153,7 @@ public class MainActivity extends AppCompatActivity {
         txtListFSong.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                DA_CHON_TAB_YEU_THICH = true;
                 Intent intent2 = new Intent(MainActivity.this,ListfavsongActivity.class);
                 startActivity(intent2);
             }

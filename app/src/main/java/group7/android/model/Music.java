@@ -7,16 +7,18 @@ public class Music {
     private String artist;
     private String album;
     private Boolean favorite;
+    private String path;
 
     public Music() {
     }
 
-    public Music(String idsong, String namesong, String artist, String album, Boolean favorite) {
+    public Music(String idsong, String namesong, String artist, String album, Boolean favorite, String path) {
         this.idsong = idsong;
         this.namesong = namesong;
         this.artist = artist;
         this.album = album;
         this.favorite = favorite;
+        this.path = path;
     }
 
     public String getIdsong() {
@@ -57,6 +59,14 @@ public class Music {
 
     public void setFavorite(Boolean favorite) {
         this.favorite = favorite;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 }
 

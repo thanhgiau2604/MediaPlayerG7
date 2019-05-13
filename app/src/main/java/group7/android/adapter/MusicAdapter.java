@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import group7.android.mediaplayerg7.ListfavsongActivity;
 import group7.android.mediaplayerg7.MainActivity;
 import group7.android.model.Music;
 import group7.android.mediaplayerg7.R;
@@ -75,7 +76,8 @@ public class MusicAdapter extends ArrayAdapter<Music>{
         row.put("favorite",false);
         MainActivity.database.update("music",row,"idsong=?",new String[]{music.getIdsong()});
         notifyDataSetChanged();
-        /*ListfavsongActivity.LayDuLieuBaiHatYeuThichTuCSDL();*/
+        if (MainActivity.DA_CHON_TAB_YEU_THICH)
+            ListfavsongActivity.LayDuLieuBaiHatYeuThichTuCSDL();
     }
     //Xử lý chọn thich bài hát
     private void xuLyThich(Music music) {
@@ -86,6 +88,7 @@ public class MusicAdapter extends ArrayAdapter<Music>{
         row.put("favorite",true);
         MainActivity.database.update("music",row,"idsong=?",new String[]{music.getIdsong()});
         notifyDataSetChanged();
-       /* ListfavsongActivity.LayDuLieuBaiHatYeuThichTuCSDL();*/
+       if (MainActivity.DA_CHON_TAB_YEU_THICH)
+           ListfavsongActivity.LayDuLieuBaiHatYeuThichTuCSDL();
     }
 }

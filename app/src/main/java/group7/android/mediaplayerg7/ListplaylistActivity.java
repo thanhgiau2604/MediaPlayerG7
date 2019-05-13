@@ -26,11 +26,11 @@ import group7.android.model.Playlist;
 public class ListplaylistActivity extends AppCompatActivity {
 
     ListView lvPlaylist;
-    ArrayList<Playlist> dsPlaylist;
-    PlaylistAdapter adapterPlaylist;
+    public static ArrayList<Playlist> dsPlaylist;
+    public static PlaylistAdapter adapterPlaylist;
     ImageView btnAddPlaylist;
     TextView txtThemPlaylist;
-    int countrow=0;
+    public static int countrow=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,17 +78,22 @@ public class ListplaylistActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
-                Intent intent = new Intent(ListplaylistActivity.this,AddmusicActivity.class);
-                intent.putExtra("nameplaylist",txtNamePlaylist.getText().toString());
-                int count = countrow+1;
-                intent.putExtra("idplaylist","playlist"+countrow+1);
                 //Insert vào csdl
+                int count = countrow+1;
+                String idplaylist = "playlist".concat(String.valueOf(count));
                 ContentValues row = new ContentValues();
-                row.put("idplaylist","playlist"+String.valueOf(count));
+                row.put("idplaylist",idplaylist);
                 row.put("nameplaylist",txtNamePlaylist.getText().toString());
                 row.put("count",0);
-                //MainActivity.database.insert("playlist",null,row);
+                Toast.makeText(ListplaylistActivity.this, "id pl = "+idplaylist, Toast.LENGTH_LONG).show();
+                long r = MainActivity.database.insert("playlist",null,row);
+                Toast.makeText(ListplaylistActivity.this, " Da insert playlist r= "+r, Toast.LENGTH_LONG).show();
+               //Mở màn hình mới
+                Intent intent = new Intent(ListplaylistActivity.this,AddmusicActivity.class);
+                intent.putExtra("nameplaylist",txtNamePlaylist.getText().toString());
+                intent.putExtra("idplaylist",idplaylist);
                 startActivity(intent);
+
             }
         });
         btnBoQua.setOnClickListener(new View.OnClickListener() {
@@ -101,11 +106,11 @@ public class ListplaylistActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    private void LayDanhSachPlaylistTuCSDL()
+    public static void LayDanhSachPlaylistTuCSDL()
     {
         Cursor cursor = MainActivity.database.query("playlist",null,null,null,null,null,null);
         dsPlaylist.clear();
-
+        countrow=0;
         while (cursor.moveToNext())
         {
             countrow+=1;
