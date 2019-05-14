@@ -1,12 +1,15 @@
 package group7.android.mediaplayerg7;
 
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.media.MediaMetadataRetriever;
+import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -70,8 +73,9 @@ public class ListsongActivity extends AppCompatActivity implements AdapterView.O
         initViews();
 
         if (KiemTraLanDauChayApp()) { //nếu lần đầu tiên chạy app thì mới quét điện thoại
-            KhoiTaoList();
-            DanhSachMusicQuetDuoc();
+            /*KhoiTaoList();
+            DanhSachMusicQuetDuoc();*/
+            getListSongs();
         }
         else //lấy từ database ra thôi
         {
@@ -146,6 +150,41 @@ public class ListsongActivity extends AppCompatActivity implements AdapterView.O
         }
         cursor.close();
         return true;
+    }
+
+    void getListSongs(){
+        ContentResolver contentResolver = getContentResolver();
+        Uri songUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        Cursor cursor = contentResolver.query(songUri, null, null, null, null);
+        paths = new ArrayList<>();
+        if(songUri != null && cursor.moveToFirst()){
+            do{
+                String s = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
+                if (s.endsWith(".mp3")) {
+                    Music music = new Music();
+                    music.setIdsong(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media._ID)));
+                    music.setNamesong(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE)));
+                    music.setAlbum(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM)));
+                    music.setArtist(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST)));
+                    music.setPath(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA)));
+                    music.setFavorite(false);
+
+                    ContentValues row = new ContentValues();
+                    row.put("idsong", music.getIdsong());
+                    row.put("namesong", music.getNamesong());
+                    row.put("artist", music.getArtist());
+                    row.put("album", music.getAlbum());
+                    row.put("favorite", music.getFavorite());
+                    row.put("path", music.getPath());
+
+                    long r = MainActivity.database.insert("music", null, row);
+                    dsBaiHatGoc.add(music);
+                    paths.add(music.getPath());
+                }
+
+            }while(cursor.moveToNext());
+        }
+        cursor.close();
     }
     //Duyệt tất cả đường dẫn sau đó gọi file nhạc ra đễ lấy namesong, artist, album
     // Thêm các trường vào music để add vào danh sách bài hát gốc
