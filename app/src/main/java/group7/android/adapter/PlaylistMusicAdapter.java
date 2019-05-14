@@ -92,7 +92,8 @@ public class PlaylistMusicAdapter extends ArrayAdapter<Music>{
         row.put("favorite",false);
         MainActivity.database.update("music",row,"idsong=?",new String[]{music.getIdsong()});
         notifyDataSetChanged();
-        ListfavsongActivity.LayDuLieuBaiHatYeuThichTuCSDL();
+        if (MainActivity.DA_CHON_TAB_YEU_THICH)
+            ListfavsongActivity.LayDuLieuBaiHatYeuThichTuCSDL();
     }
     //Xử lý chọn thich bài hát
     private void xuLyThich(Music music) {
@@ -102,6 +103,7 @@ public class PlaylistMusicAdapter extends ArrayAdapter<Music>{
         ContentValues row = new ContentValues();
         row.put("favorite",true);
         MainActivity.database.update("music",row,"idsong=?",new String[]{music.getIdsong()});
-        notifyDataSetChanged();
+        if (MainActivity.DA_CHON_TAB_YEU_THICH)
+            ListfavsongActivity.LayDuLieuBaiHatYeuThichTuCSDL();
     }
 }

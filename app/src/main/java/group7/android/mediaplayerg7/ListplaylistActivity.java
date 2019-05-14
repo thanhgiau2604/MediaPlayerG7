@@ -51,6 +51,8 @@ public class ListplaylistActivity extends AppCompatActivity {
         lvPlaylist.setAdapter(adapterPlaylist);
 
         LayDanhSachPlaylistTuCSDL();
+
+        SonginplaylistActivity.CHONTHEMBAIHATVAOPLAYLIST = false;
     }
 
     private void AddEvents() {

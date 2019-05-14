@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -15,10 +17,14 @@ import group7.android.model.Music;
 public class SonginplaylistActivity extends AppCompatActivity {
 
     ListView lvBaiHat;
-    ArrayList<Music> dsBaiHat;
-    PlaylistMusicAdapter adapterBaiHat;
+    public static ArrayList<Music> dsBaiHat;
+    public static PlaylistMusicAdapter adapterBaiHat;
+    public static ArrayList<String> paths;
+    public static String idplaylist;
+    Button btnChinhSuaPl;
+    Intent intent;
 
-    ArrayList<String> paths;
+    public static boolean CHONTHEMBAIHATVAOPLAYLIST=false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,16 +38,27 @@ public class SonginplaylistActivity extends AppCompatActivity {
         dsBaiHat = new ArrayList<>();
         adapterBaiHat = new PlaylistMusicAdapter(SonginplaylistActivity.this,R.layout.itemsonginplaylist,dsBaiHat);
         lvBaiHat.setAdapter(adapterBaiHat);
+        Intent intent = getIntent();
+        idplaylist = intent.getStringExtra("idplaylist");
         LayDanhSachBaiHatTrongPlaylist();
 
     }
 
     private void AddEvents() {
+        btnChinhSuaPl = (Button)findViewById(R.id.btnchinhsuapl);
+        btnChinhSuaPl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CHONTHEMBAIHATVAOPLAYLIST=true;
+                Intent intent = new Intent(SonginplaylistActivity.this,AddmusicActivity.class);
+                intent.putExtra("idplaylist",idplaylist);
+                startActivity(intent);
+            }
+        });
+
     }
 
-    private void LayDanhSachBaiHatTrongPlaylist() {
-        Intent intent = getIntent();
-        String idplaylist = intent.getStringExtra("idplaylist");
+    public static void LayDanhSachBaiHatTrongPlaylist() {
         Cursor cursor = MainActivity.database.query("detailplaylist",null,"idplaylist=?",new String[]{idplaylist},null,null,null);
         dsBaiHat.clear();
         paths = new ArrayList<>();

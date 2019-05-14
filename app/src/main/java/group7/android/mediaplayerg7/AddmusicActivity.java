@@ -60,7 +60,10 @@ public class AddmusicActivity extends AppCompatActivity {
         }
         else //lấy từ database ra thôi
         {
-            DanhSachMusicLayTuDatabase();
+            if (SonginplaylistActivity.CHONTHEMBAIHATVAOPLAYLIST==true)
+                LayDanhSachNhacDeThem();
+            else
+                DanhSachMusicLayTuDatabase();
         }
 
         Toast.makeText(this, "idactivity = "+idpl, Toast.LENGTH_SHORT).show();
@@ -72,7 +75,12 @@ public class AddmusicActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 onBackPressed();
+                if (SonginplaylistActivity.CHONTHEMBAIHATVAOPLAYLIST)
+                    SonginplaylistActivity.LayDanhSachBaiHatTrongPlaylist();
+
                 ListplaylistActivity.LayDanhSachPlaylistTuCSDL();
+                SonginplaylistActivity.CHONTHEMBAIHATVAOPLAYLIST=false;
+
             }
         });
     }
@@ -94,6 +102,44 @@ public class AddmusicActivity extends AppCompatActivity {
             dsBaiHat.add(music);
         }
         cursor.close(); //Đóng kết nối
+        adapterBaiHat.notifyDataSetChanged();
+    }
+
+    private void LayDanhSachNhacDeThem()
+    {
+        paths = new ArrayList<>();
+        Intent intent = getIntent();
+        String idplaylist = intent.getStringExtra("idplaylist");
+
+        Cursor cursorall = MainActivity.database.query("music",null,null,null,null,null,null);
+        while (cursorall.moveToNext())
+        {
+
+            boolean check = true;
+            Cursor cursor = MainActivity.database.query("detailplaylist",null,"idplaylist=?",new String[]{idplaylist},null,null,null);
+            while (cursor.moveToNext())
+            {
+                if (cursorall.getString(0).equals(cursor.getString(0)))
+                {
+                    check = false;
+                }
+            }
+            if (check)
+            {
+                Music music = new Music();
+                music.setIdsong(cursorall.getString(0));
+                music.setNamesong(cursorall.getString(1));
+                music.setArtist(cursorall.getString(2));
+                music.setAlbum(cursorall.getString(3));
+                Boolean bool = cursorall.getInt(4)>0;
+                music.setFavorite(bool);
+                music.setPath(cursorall.getString(5));
+                dsBaiHat.add(music);
+                paths.add(music.getPath());
+            }
+            cursor.close();
+        }
+        cursorall.close();
         adapterBaiHat.notifyDataSetChanged();
     }
 

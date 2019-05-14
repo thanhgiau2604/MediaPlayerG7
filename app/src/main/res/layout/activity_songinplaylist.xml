@@ -7,6 +7,13 @@
     android:orientation="vertical"
     tools:context=".SonginplaylistActivity">
 
+    <Button
+        android:id="@+id/btnchinhsuapl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="CHỈNH SỬA" />
+
     <ListView
         android:id="@+id/listsonginpl"
         android:layout_width="match_parent"

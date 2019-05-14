@@ -106,7 +106,7 @@ public class AddMusicAdapter extends ArrayAdapter<Music> {
         ContentValues row2 = new ContentValues();
         row2.put("count",curcount+1);
         MainActivity.database.update("playlist",row2,"idplaylist=?",new String[]{AddmusicActivity.idpl});
-        //row1.put("count",);
+
         notifyDataSetChanged();
     }
 
@@ -114,6 +114,20 @@ public class AddMusicAdapter extends ArrayAdapter<Music> {
         add[position]=1;
         btnAdded.setVisibility(View.INVISIBLE);
         btnAddMusic.setVisibility(View.VISIBLE);
+        MainActivity.database.delete("detaiplaylist","idsong=?",new String[]{music.getIdsong()});
+
+        //Lấy số lượng bài hát trong playlist để cập nhật
+        ContentValues row1 = new ContentValues();
+        Cursor cursor = MainActivity.database.query("playlist",null,"idplaylist=?",new String[] {AddmusicActivity.idpl},null,null,null);
+        int curcount=-1;
+        while (cursor.moveToNext())
+        {
+            curcount = cursor.getInt(2);
+        }
+        //Update lại bảng Playlist
+        ContentValues row2 = new ContentValues();
+        row2.put("count",curcount+1);
+        MainActivity.database.update("playlist",row2,"idplaylist=?",new String[]{AddmusicActivity.idpl});
         notifyDataSetChanged();
     }
 }
