@@ -79,16 +79,13 @@ public class AddmusicActivity extends AppCompatActivity {
 
                 ListplaylistActivity.LayDanhSachPlaylistTuCSDL();
                 SonginplaylistActivity.CHONTHEMBAIHATVAOPLAYLIST=false;
-
             }
         });
     }
 
     private void DanhSachMusicLayTuDatabase() {
         Cursor cursor = MainActivity.database.query("music",null,null,null,null,null,null);
-
         dsBaiHat.clear();
-
         while (cursor.moveToNext())
         {
             Music music = new Music();
@@ -109,7 +106,6 @@ public class AddmusicActivity extends AppCompatActivity {
         paths = new ArrayList<>();
         Intent intent = getIntent();
         String idplaylist = intent.getStringExtra("idplaylist");
-
         Cursor cursorall = MainActivity.database.query("music",null,null,null,null,null,null);
         while (cursorall.moveToNext())
         {

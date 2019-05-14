@@ -114,7 +114,7 @@ public class AddMusicAdapter extends ArrayAdapter<Music> {
         add[position]=1;
         btnAdded.setVisibility(View.INVISIBLE);
         btnAddMusic.setVisibility(View.VISIBLE);
-        MainActivity.database.delete("detaiplaylist","idsong=?",new String[]{music.getIdsong()});
+        MainActivity.database.delete("detailplaylist","idsong=?",new String[]{music.getIdsong()});
 
         //Lấy số lượng bài hát trong playlist để cập nhật
         ContentValues row1 = new ContentValues();

@@ -2,6 +2,7 @@ package group7.android.adapter;
 
 import android.app.Activity;
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,9 +13,12 @@ import android.widget.Toast;
 
 import java.util.List;
 
+import group7.android.mediaplayerg7.AddmusicActivity;
 import group7.android.mediaplayerg7.ListfavsongActivity;
+import group7.android.mediaplayerg7.ListplaylistActivity;
 import group7.android.mediaplayerg7.ListsongActivity;
 import group7.android.mediaplayerg7.MainActivity;
+import group7.android.mediaplayerg7.SonginplaylistActivity;
 import group7.android.model.Music;
 import group7.android.mediaplayerg7.R;
 
@@ -72,15 +76,31 @@ public class PlaylistMusicAdapter extends ArrayAdapter<Music>{
         btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                xuLyXoaBaiHatKhoiPlaylist();
+                xuLyXoaBaiHatKhoiPlaylist(music);
             }
         });
         
         return row;
     }
 
-    private void xuLyXoaBaiHatKhoiPlaylist() {
-
+    private void xuLyXoaBaiHatKhoiPlaylist(Music music) {
+        MainActivity.database.delete("detailplaylist","idsong=? and idplaylist=?",new String[]{music.getIdsong(),
+                SonginplaylistActivity.idplaylist});
+        //Lấy số lượng bài hát trong playlist để cập nhật
+        ContentValues row1 = new ContentValues();
+        Cursor cursor = MainActivity.database.query("playlist",null,"idplaylist=?",new String[] {SonginplaylistActivity.idplaylist},null,null,null);
+        int curcount=-1;
+        while (cursor.moveToNext())
+        {
+            curcount = cursor.getInt(2);
+        }
+        //Update lại bảng Playlist
+        ContentValues row2 = new ContentValues();
+        row2.put("count",curcount-1);
+        MainActivity.database.update("playlist",row2,"idplaylist=?",new String[]{SonginplaylistActivity.idplaylist});
+        SonginplaylistActivity.LayDanhSachBaiHatTrongPlaylist();
+        ListplaylistActivity.LayDanhSachPlaylistTuCSDL();
+        notifyDataSetChanged();
     }
 
     //Xử lý khi chọn không thích bài hát

@@ -28,6 +28,8 @@ public class SonginplaylistActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Intent intent = getIntent();
+        idplaylist = intent.getStringExtra("idplaylist");
         setContentView(R.layout.activity_songinplaylist);
         AddControls();
         AddEvents();
@@ -38,8 +40,6 @@ public class SonginplaylistActivity extends AppCompatActivity {
         dsBaiHat = new ArrayList<>();
         adapterBaiHat = new PlaylistMusicAdapter(SonginplaylistActivity.this,R.layout.itemsonginplaylist,dsBaiHat);
         lvBaiHat.setAdapter(adapterBaiHat);
-        Intent intent = getIntent();
-        idplaylist = intent.getStringExtra("idplaylist");
         LayDanhSachBaiHatTrongPlaylist();
 
     }
