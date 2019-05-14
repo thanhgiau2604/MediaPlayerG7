@@ -37,8 +37,8 @@ public class PlaylistMusicAdapter extends ArrayAdapter<Music>{
         View row = inflater.inflate(resource,null);
         TextView txtNameSong = (TextView)row.findViewById(R.id.txtNameSong);
         TextView txtNameArtist = row.<TextView>findViewById(R.id.txtNameArtist);
-        btnLike = row.<ImageButton>findViewById(R.id.btnlike);
-        btnDislike = row.<ImageButton>findViewById(R.id.btndislike);
+        btnLike = row.<ImageButton>findViewById(R.id.btnlikeinpl);
+        btnDislike = row.<ImageButton>findViewById(R.id.btndislikeinpl);
         btnDelete = row.<ImageButton>findViewById(R.id.btndelsong);
         
         final Music music = this.objects.get(position);
@@ -103,6 +103,7 @@ public class PlaylistMusicAdapter extends ArrayAdapter<Music>{
         ContentValues row = new ContentValues();
         row.put("favorite",true);
         MainActivity.database.update("music",row,"idsong=?",new String[]{music.getIdsong()});
+        notifyDataSetChanged();
         if (MainActivity.DA_CHON_TAB_YEU_THICH)
             ListfavsongActivity.LayDuLieuBaiHatYeuThichTuCSDL();
     }
