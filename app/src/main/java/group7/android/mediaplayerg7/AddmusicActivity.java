@@ -66,7 +66,6 @@ public class AddmusicActivity extends AppCompatActivity {
                 DanhSachMusicLayTuDatabase();
         }
 
-        Toast.makeText(this, "idactivity = "+idpl, Toast.LENGTH_SHORT).show();
     }
 
     private void AddEvents() {

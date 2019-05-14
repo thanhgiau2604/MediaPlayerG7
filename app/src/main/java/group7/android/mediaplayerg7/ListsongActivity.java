@@ -169,7 +169,6 @@ public class ListsongActivity extends AppCompatActivity implements AdapterView.O
             row.put("favorite",music.getFavorite());
             row.put("path",music.getPath());
             long  r = MainActivity.database.insert("music",null,row);
-            Toast.makeText(ListsongActivity.this, "Thêm r = "+r, Toast.LENGTH_SHORT).show();
             dsBaiHatGoc.add(music);
         }
     }
