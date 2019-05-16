@@ -10,6 +10,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,6 +22,8 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import static group7.android.mediaplayerg7.MusicPlayer.PLAYER_PLAY;
+
 public class MainActivity extends AppCompatActivity {
 
     public  static String DATABASE_NAME = "dbmediaplayer.sqlite";
@@ -28,6 +32,28 @@ public class MainActivity extends AppCompatActivity {
     TextView txtListSong, txtListPlaylist, txtListFSong;
 
     public  static SQLiteDatabase database = null;
+
+    public static MusicPlayer musicPlayer;
+
+
+    public static TextView tvTitle;
+    public static TextView tvArtist;
+    public static TextView tvTimeProcess;
+    public static SeekBar sbProcess;
+    public static TextView tvTimeTotal;
+    public static ImageView ivShuffle;
+    public static ImageView ivPrevious;
+    public static ImageView ivPlay;
+    public static ImageView ivNext;
+    public static ImageView ivRepeat;
+    public static int timeProcess;
+    public static int timeTotal;
+    public static boolean isRunning;
+    public static int UPDATE_TIME = 1;
+    public static int timeCurrent;
+    public static int position;
+
+    public static String TEN_BAI_HAT, TEN_CA_SI, TOTAL_TIME;
 
     public static boolean DA_CHON_TAB_YEU_THICH = false;
     @Override
@@ -126,6 +152,7 @@ public class MainActivity extends AppCompatActivity {
         txtListSong = (TextView)findViewById(R.id.txtlistsong);
         txtListPlaylist = (TextView)findViewById(R.id.txtlistplaylist);
         txtListFSong = (TextView) findViewById(R.id.txtlistfsong);
+        musicPlayer = new MusicPlayer();
     }
 
 

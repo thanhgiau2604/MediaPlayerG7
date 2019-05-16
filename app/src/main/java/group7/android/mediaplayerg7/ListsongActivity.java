@@ -28,29 +28,13 @@ import group7.android.adapter.MusicAdapter;
 import group7.android.model.Music;
 
 import static group7.android.mediaplayerg7.MusicPlayer.PLAYER_PLAY;
+import static group7.android.mediaplayerg7.MusicPlayer.PLAYER_PAUSE;
 public class ListsongActivity extends AppCompatActivity implements AdapterView.OnItemClickListener, View.OnClickListener, SeekBar.OnSeekBarChangeListener, MusicPlayer.OnCompletionListener{
     ListView lvBaiHatGoc;
     ArrayList<Music> dsBaiHatGoc;
     MusicAdapter adapterBaiHatGoc;
     //
-    private TextView tvTitle;
-    private TextView tvArtist;
-    private TextView tvTimeProcess;
-    private SeekBar sbProcess;
-    private TextView tvTimeTotal;
-    private ImageView ivShuffle;
-    private ImageView ivPrevious;
-    private ImageView ivPlay;
-    private ImageView ivNext;
-    private ImageView ivRepeat;
-    private int timeProcess;
-    private int timeTotal;
-    private boolean isRunning;
-    private int UPDATE_TIME = 1;
-    private int timeCurrent;
-    private int position;
 
-    private MusicPlayer musicPlayer;
 
     private ArrayList<String> paths; // lưu tất cả đường dẫn của các bài hát
     @Override
@@ -60,9 +44,24 @@ public class ListsongActivity extends AppCompatActivity implements AdapterView.O
         AddControls();
         AddEvents();
         initComponents();
+        TiepTucBaiHat();
     }
 
 
+    private  void TiepTucBaiHat()
+    {
+        if (MainActivity.musicPlayer.getState()==PLAYER_PLAY || MainActivity.musicPlayer.getState()==PLAYER_PAUSE)
+        {
+            MainActivity.tvArtist.setText(MainActivity.TEN_BAI_HAT);
+            MainActivity.tvTitle.setText(MainActivity.TEN_CA_SI);
+            MainActivity.tvTimeTotal.setText(MainActivity.TOTAL_TIME);
+            MainActivity.isRunning = true;
+            if (MainActivity.musicPlayer.getState()==PLAYER_PLAY)
+                MainActivity.ivPlay.setImageResource(R.drawable.pause);
+            else
+                MainActivity.ivPlay.setImageResource(R.drawable.play);
+        }
+    }
 
     private void AddControls() {
         lvBaiHatGoc = this.<ListView>findViewById(R.id.listSong);
@@ -85,10 +84,7 @@ public class ListsongActivity extends AppCompatActivity implements AdapterView.O
     }
 
     private void initComponents() {
-        //adapter = new PlayListAdapter(App.getContext(), paths);
-        //lvPlayList.setAdapter(adapter);
-        musicPlayer = new MusicPlayer();
-        musicPlayer.setOnCompletionListener(this);
+        /*MainActivity.musicPlayer.setOnCompletionListener(this);*/
     }
 
     private void AddEvents() {
@@ -97,26 +93,27 @@ public class ListsongActivity extends AppCompatActivity implements AdapterView.O
 
     private void initListeners() {
         lvBaiHatGoc.setOnItemClickListener(this);
-        ivShuffle.setOnClickListener(this);
-        ivPrevious.setOnClickListener(this);
-        ivPlay.setOnClickListener(this);
-        ivNext.setOnClickListener(this);
-        ivRepeat.setOnClickListener(this);
-        sbProcess.setOnSeekBarChangeListener(this);
+        MainActivity.ivShuffle.setOnClickListener(this);
+        MainActivity.ivPrevious.setOnClickListener(this);
+        MainActivity.ivPlay.setOnClickListener(this);
+        MainActivity.ivNext.setOnClickListener(this);
+        MainActivity.ivRepeat.setOnClickListener(this);
+        MainActivity.sbProcess.setOnSeekBarChangeListener(this);
+        MainActivity.musicPlayer.setOnCompletionListener(this);
     }
 
     private void initViews() {
         //lvPlayList = (ListView) findViewById(R.id.lv_play_list);
-        tvTitle = (TextView) findViewById(R.id.tv_title);
-        tvArtist = (TextView) findViewById(R.id.tv_artist);
-        tvTimeProcess = (TextView) findViewById(R.id.tv_time_process);
-        sbProcess = (SeekBar) findViewById(R.id.sb_process);
-        tvTimeTotal = (TextView) findViewById(R.id.tv_time_total);
-        ivShuffle = (ImageView) findViewById(R.id.iv_shuffle);
-        ivPrevious = (ImageView) findViewById(R.id.iv_previous);
-        ivPlay = (ImageView) findViewById(R.id.iv_play);
-        ivNext = (ImageView) findViewById(R.id.iv_next);
-        ivRepeat = (ImageView) findViewById(R.id.iv_repeat);
+        MainActivity.tvTitle = (TextView) findViewById(R.id.tv_title);
+        MainActivity.tvArtist = (TextView) findViewById(R.id.tv_artist);
+        MainActivity.tvTimeProcess = (TextView) findViewById(R.id.tv_time_process);
+        MainActivity.sbProcess = (SeekBar) findViewById(R.id.sb_process);
+        MainActivity.tvTimeTotal = (TextView) findViewById(R.id.tv_time_total);
+        MainActivity.ivShuffle = (ImageView) findViewById(R.id.iv_shuffle);
+        MainActivity.ivPrevious = (ImageView) findViewById(R.id.iv_previous);
+        MainActivity.ivPlay = (ImageView) findViewById(R.id.iv_play);
+        MainActivity.ivNext = (ImageView) findViewById(R.id.iv_next);
+        MainActivity.ivRepeat = (ImageView) findViewById(R.id.iv_repeat);
     }
     private void DanhSachMusicLayTuDatabase() {
         Cursor cursor = MainActivity.database.query("music",null,null,null,null,null,null);
@@ -235,48 +232,51 @@ public class ListsongActivity extends AppCompatActivity implements AdapterView.O
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            if (msg.what == UPDATE_TIME) {
-                timeCurrent = musicPlayer.getTimeCurrent();
-                tvTimeProcess.setText(getTimeFormat(timeCurrent));
-                sbProcess.setProgress(timeCurrent);
+            if (msg.what == MainActivity.UPDATE_TIME) {
+                MainActivity.timeCurrent = MainActivity.musicPlayer.getTimeCurrent();
+                MainActivity.tvTimeProcess.setText(getTimeFormat(MainActivity.timeCurrent));
+                MainActivity.sbProcess.setProgress(MainActivity.timeCurrent);
             }
         }
     };
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        this.position = position;
+        MainActivity.position = position;
         String path = paths.get(position);
         playMusic(path);
     }
 
     private void playMusic(String path) {
-        if (musicPlayer.getState() == PLAYER_PLAY) {
-            musicPlayer.stop();
+        if (MainActivity.musicPlayer.getState() == PLAYER_PLAY) {
+            MainActivity.musicPlayer.stop();
         }
-        musicPlayer.setup(path);
-        musicPlayer.play();
-        ivPlay.setImageResource(R.drawable.pause);
+        MainActivity.musicPlayer.setup(path);
+        MainActivity.musicPlayer.play();
+        MainActivity.ivPlay.setImageResource(R.drawable.pause);
         // set up tên bài hát + ca sĩ
         MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-        mmr.setDataSource(paths.get(position));
+        mmr.setDataSource(paths.get(MainActivity.position));
         String artist = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
         String title = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
-        tvArtist.setText(artist);
-        tvTitle.setText(title);
-        isRunning = true;
+        MainActivity.TEN_BAI_HAT= title;
+        MainActivity.TEN_CA_SI=artist;
+        MainActivity.tvArtist.setText(artist);
+        MainActivity.tvTitle.setText(title);
+        MainActivity.isRunning = true;
 
         // set up time
         // total time
-        tvTimeTotal.setText(getTimeFormat(musicPlayer.getTimeTotal()));
+        MainActivity.tvTimeTotal.setText(getTimeFormat(MainActivity.musicPlayer.getTimeTotal()));
+        MainActivity.TOTAL_TIME = MainActivity.tvTimeTotal.getText().toString();
         // process time // set up seekbar
-        sbProcess.setMax(musicPlayer.getTimeTotal());
+        MainActivity.sbProcess.setMax(MainActivity.musicPlayer.getTimeTotal());
         new Thread(new Runnable() {
             @Override
             public void run() {
-                while (isRunning) {
+                while (MainActivity.isRunning) {
                     Message message = new Message();
-                    message.what = UPDATE_TIME;
+                    message.what = MainActivity.UPDATE_TIME;
                     handler.sendMessage(message);
                     try {
                         Thread.sleep(100);
@@ -325,12 +325,12 @@ public class ListsongActivity extends AppCompatActivity implements AdapterView.O
                 break;
 
             case R.id.iv_play:
-                if (musicPlayer.getState() == PLAYER_PLAY) {
-                    ivPlay.setImageResource(R.drawable.play);
-                    musicPlayer.pause();
+                if (MainActivity.musicPlayer.getState() == PLAYER_PLAY) {
+                    MainActivity.ivPlay.setImageResource(R.drawable.play);
+                    MainActivity.musicPlayer.pause();
                 } else {
-                    ivPlay.setImageResource(R.drawable.pause);
-                    musicPlayer.play();
+                    MainActivity.ivPlay.setImageResource(R.drawable.pause);
+                    MainActivity.musicPlayer.play();
                 }
                 break;
 
@@ -344,18 +344,18 @@ public class ListsongActivity extends AppCompatActivity implements AdapterView.O
     }
 
     private void previousMusic() {
-        position--;
-        if (position < 0) {
-            position = paths.size() - 1;
+        MainActivity.position--;
+        if (MainActivity.position < 0) {
+            MainActivity.position = paths.size() - 1;
         }
-        String path = paths.get(position);
+        String path = paths.get(MainActivity.position);
         playMusic(path);
     }
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        if (timeCurrent != progress && timeCurrent != 0)
-            musicPlayer.seek(sbProcess.getProgress() * 1000);
+        if (MainActivity.timeCurrent != progress && MainActivity.timeCurrent != 0)
+            MainActivity.musicPlayer.seek(MainActivity.sbProcess.getProgress() * 1000);
     }
 
     @Override
@@ -378,11 +378,11 @@ public class ListsongActivity extends AppCompatActivity implements AdapterView.O
     }
 
     private void nextMusic() {
-        position++;
-        if (position >= paths.size()) {
-            position = 0;
+        MainActivity.position++;
+        if (MainActivity.position >= paths.size()) {
+            MainActivity.position = 0;
         }
-        String path = paths.get(position);
+        String path = paths.get(MainActivity.position);
         playMusic(path);
     }
 }
