@@ -13,12 +13,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".SonginplaylistActivity"></activity>
-        <activity android:name=".AddmusicActivity" />
-        <activity android:name=".PlaylistActivity" />
-        <activity android:name=".ListfavsongActivity" />
-        <activity android:name=".ListplaylistActivity" />
-        <activity android:name=".ListsongActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".AddmusicActivity" android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".PlaylistActivity" android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".ListfavsongActivity" android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".ListplaylistActivity" android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".ListsongActivity" android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
