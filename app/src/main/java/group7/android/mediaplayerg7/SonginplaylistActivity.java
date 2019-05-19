@@ -1,10 +1,12 @@
 package group7.android.mediaplayerg7;
 
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.database.Cursor;
 import android.media.MediaMetadataRetriever;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.IdRes;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,7 +33,6 @@ public class SonginplaylistActivity extends AppCompatActivity implements Adapter
     ListView lvBaiHat;
     public static ArrayList<Music> dsBaiHat;
     public static PlaylistMusicAdapter adapterBaiHat;
-    public static ArrayList<String> paths;
     public static String idplaylist;
     Button btnChinhSuaPl;
     Intent intent;
@@ -46,15 +47,17 @@ public class SonginplaylistActivity extends AppCompatActivity implements Adapter
         AddControls();
         AddEvents();
         TiepTucBaiHat();
+        ListplaylistActivity.DA_MO_PLAYLIST=false;
     }
 
     private  void TiepTucBaiHat()
     {
         if (MainActivity.musicPlayer.getState()==PLAYER_PLAY || MainActivity.musicPlayer.getState()==PLAYER_PAUSE)
         {
-            MainActivity.tvArtist.setText(MainActivity.TEN_BAI_HAT);
-            MainActivity.tvTitle.setText(MainActivity.TEN_CA_SI);
+            MainActivity.tvArtist.setText(MainActivity.TEN_CA_SI);
+            MainActivity.tvTitle.setText(MainActivity.TEN_BAI_HAT);
             MainActivity.tvTimeTotal.setText(MainActivity.TOTAL_TIME);
+            MainActivity.isRunning = true;
             if (MainActivity.musicPlayer.getState()==PLAYER_PLAY)
                 MainActivity.ivPlay.setImageResource(R.drawable.pause);
             else
@@ -115,7 +118,7 @@ public class SonginplaylistActivity extends AppCompatActivity implements Adapter
     public static void LayDanhSachBaiHatTrongPlaylist() {
         Cursor cursor = MainActivity.database.query("detailplaylist",null,"idplaylist=?",new String[]{idplaylist},null,null,null);
         dsBaiHat.clear();
-        paths = new ArrayList<>();
+        MainActivity.paths = new ArrayList<>();
         while (cursor.moveToNext())
         {
             Cursor cursor1 = MainActivity.database.query("music",null,"idsong=?",new String[]{cursor.getString(0)},null,null,null);
@@ -130,7 +133,7 @@ public class SonginplaylistActivity extends AppCompatActivity implements Adapter
                 music.setFavorite(bool);
                 music.setPath(cursor1.getString(5));
                 dsBaiHat.add(music);
-                paths.add(music.getPath());
+                MainActivity.paths.add(music.getPath());
             }
             cursor1.close();
         }
@@ -145,7 +148,12 @@ public class SonginplaylistActivity extends AppCompatActivity implements Adapter
             if (msg.what == MainActivity.UPDATE_TIME) {
                 MainActivity.timeCurrent = MainActivity.musicPlayer.getTimeCurrent();
                 MainActivity.tvTimeProcess.setText(getTimeFormat(MainActivity.timeCurrent));
-                MainActivity.sbProcess.setProgress(MainActivity.timeCurrent);
+                Double percentage = (double) 0;
+                long currentSeconds = (int) (MainActivity.timeCurrent);
+                long totalSeconds = (int) (MainActivity.musicPlayer.getTimeTotal());
+                percentage =(((double)currentSeconds)/totalSeconds)*100;
+                System.out.println(percentage);
+                MainActivity.sbProcess.setProgress(percentage.intValue());
             }
         }
     };
@@ -153,7 +161,7 @@ public class SonginplaylistActivity extends AppCompatActivity implements Adapter
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         MainActivity.position = position;
-        String path = paths.get(position);
+        String path = MainActivity.paths.get(position);
         playMusic(path);
     }
 
@@ -161,12 +169,21 @@ public class SonginplaylistActivity extends AppCompatActivity implements Adapter
         if (MainActivity.musicPlayer.getState() == PLAYER_PLAY) {
             MainActivity.musicPlayer.stop();
         }
+        // process time // set up seekbar
+
+
         MainActivity.musicPlayer.setup(path);
+
+        MainActivity.sbProcess.setProgress(0);
+
+
         MainActivity.musicPlayer.play();
+
+        MainActivity.totaltime = MainActivity.musicPlayer.getTimeTotal();
         MainActivity.ivPlay.setImageResource(R.drawable.pause);
         // set up tên bài hát + ca sĩ
         MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-        mmr.setDataSource(paths.get(MainActivity.position));
+        mmr.setDataSource(MainActivity.paths.get(MainActivity.position));
         String artist = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
         String title = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
         MainActivity.TEN_BAI_HAT= title;
@@ -174,13 +191,13 @@ public class SonginplaylistActivity extends AppCompatActivity implements Adapter
         MainActivity.tvArtist.setText(artist);
         MainActivity.tvTitle.setText(title);
         MainActivity.isRunning = true;
-
         // set up time
         // total time
         MainActivity.tvTimeTotal.setText(getTimeFormat(MainActivity.musicPlayer.getTimeTotal()));
         MainActivity.TOTAL_TIME = MainActivity.tvTimeTotal.getText().toString();
-        // process time // set up seekbar
-        MainActivity.sbProcess.setMax(MainActivity.musicPlayer.getTimeTotal());
+
+
+        showNotification(title,artist);
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -238,9 +255,20 @@ public class SonginplaylistActivity extends AppCompatActivity implements Adapter
                 if (MainActivity.musicPlayer.getState() == PLAYER_PLAY) {
                     MainActivity.ivPlay.setImageResource(R.drawable.play);
                     MainActivity.musicPlayer.pause();
+
+                    MainActivity.notificationLayout.setViewVisibility(R.id.imgPlay,View.VISIBLE);
+                    MainActivity.notificationLayout.setViewVisibility(R.id.imgPause,View.GONE);
+
+                    MainActivity.notificationManager.notify(1, MainActivity.notification);
+
                 } else {
                     MainActivity.ivPlay.setImageResource(R.drawable.pause);
                     MainActivity.musicPlayer.play();
+
+                    MainActivity.notificationLayout.setViewVisibility(R.id.imgPlay,View.GONE);
+                    MainActivity.notificationLayout.setViewVisibility(R.id.imgPause,View.VISIBLE);
+
+                    MainActivity.notificationManager.notify(1, MainActivity.notification);
                 }
                 break;
 
@@ -256,16 +284,29 @@ public class SonginplaylistActivity extends AppCompatActivity implements Adapter
     private void previousMusic() {
         MainActivity.position--;
         if (MainActivity.position < 0) {
-            MainActivity.position = paths.size() - 1;
+            MainActivity.position = MainActivity.paths.size() - 1;
         }
-        String path = paths.get(MainActivity.position);
+        String path = MainActivity.paths.get(MainActivity.position);
         playMusic(path);
     }
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        if (MainActivity.timeCurrent != progress && MainActivity.timeCurrent != 0)
-            MainActivity.musicPlayer.seek(MainActivity.sbProcess.getProgress() * 1000);
+        Double percentage = (double) 0;
+        long currentSeconds = (int) (MainActivity.musicPlayer.getTimeCurrent());
+        long totalSeconds = (int) (MainActivity.musicPlayer.getTimeTotal());
+        percentage =(((double)currentSeconds)/totalSeconds)*100;
+        System.out.print("percentage="+percentage+" progress="+progress);
+        if (percentage.intValue() != progress && MainActivity.timeCurrent != 0) {
+            int currentDuration = 0;
+            int totalDuration = MainActivity.musicPlayer.getTimeTotal();
+            currentDuration = (int) ((((double)progress) / 100) * totalDuration);
+            MainActivity.musicPlayer.seek(currentDuration * 1000);
+        }
+        if (progress==100)
+        {
+            nextMusic();
+        }
     }
 
     @Override
@@ -280,19 +321,46 @@ public class SonginplaylistActivity extends AppCompatActivity implements Adapter
 
     @Override
     public void OnEndMusic() {
-        // khi kết thúc bài hát nó sẽ vào đây
-        nextMusic();
-
-        // như vậy khi kết thúc bài hát nó có thể next bài tiếp theo
-        // nếu hết danh sách bài hát nó sẽ quay lại từ bài đầu tiên
     }
 
     private void nextMusic() {
         MainActivity.position++;
-        if (MainActivity.position >= paths.size()) {
+        if (MainActivity.position >= MainActivity.paths.size()) {
             MainActivity.position = 0;
         }
-        String path = paths.get(MainActivity.position);
+        String path = MainActivity.paths.get(MainActivity.position);
         playMusic(path);
+    }
+
+    private void showNotification(String tenbaihat, String tencasi) {
+        MainActivity.notificationLayout.setTextViewText(R.id.tvnTenBaiHat, tenbaihat);
+        MainActivity.notificationLayout.setTextViewText(R.id.tvnTenCaSi,tencasi);
+        MainActivity.notificationLayout.setImageViewResource(R.id.imglargemusic,R.drawable.iclargemusic);
+        MainActivity.notificationLayout.setImageViewResource(R.id.imgPlay,R.drawable.icplay);
+        MainActivity.notificationLayout.setImageViewResource(R.id.imgPause,R.drawable.icpause);
+        MainActivity.notificationLayout.setImageViewResource(R.id.imgNext,R.drawable.icnext);
+        MainActivity.notificationLayout.setImageViewResource(R.id.imgPrevious,R.drawable.icprevious);
+
+        MainActivity.notificationLayout.setViewVisibility(R.id.imgPlay,View.GONE);
+        MainActivity.notificationLayout.setViewVisibility(R.id.imgPause,View.VISIBLE);
+
+        MainActivity.notificationLayout.setOnClickPendingIntent(R.id.imgPause,
+                onButtonNotificationClick(R.id.imgPause));
+        MainActivity.notificationLayout.setOnClickPendingIntent(R.id.imgPlay,
+                onButtonNotificationClick(R.id.imgPlay));
+        MainActivity.notificationLayout.setOnClickPendingIntent(R.id.imgPrevious,
+                onButtonNotificationClick(R.id.imgPrevious));
+        MainActivity.notificationLayout.setOnClickPendingIntent(R.id.imgNext,
+                onButtonNotificationClick(R.id.imgNext));
+
+        MainActivity.notificationManager =
+                (android.app.NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        MainActivity.notificationManager.notify(1, MainActivity.notification);
+    }
+
+    private PendingIntent onButtonNotificationClick(@IdRes int id) {
+        Intent intent = new Intent(MainActivity.ACTION_NOTIFICATION_BUTTON_CLICK);
+        intent.putExtra(MainActivity.EXTRA_BUTTON_CLICKED, id);
+        return PendingIntent.getBroadcast(this, id, intent, 0);
     }
 }

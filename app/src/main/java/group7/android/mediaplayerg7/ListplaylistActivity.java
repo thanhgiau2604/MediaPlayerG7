@@ -32,6 +32,7 @@ public class ListplaylistActivity extends AppCompatActivity {
     ImageView btnAddPlaylist;
     TextView txtThemPlaylist;
     public static int countrow=0;
+    public static boolean DA_MO_PLAYLIST = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,10 +72,13 @@ public class ListplaylistActivity extends AppCompatActivity {
         lvPlaylist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Playlist playlist = dsPlaylist.get(position);
-                Intent intent = new Intent(ListplaylistActivity.this,SonginplaylistActivity.class);
-                intent.putExtra("idplaylist",playlist.getIdplaylist());
-                startActivity(intent);
+                if (DA_MO_PLAYLIST==false) {
+                    DA_MO_PLAYLIST=true;
+                    Playlist playlist = dsPlaylist.get(position);
+                    Intent intent = new Intent(ListplaylistActivity.this, SonginplaylistActivity.class);
+                    intent.putExtra("idplaylist", playlist.getIdplaylist());
+                    startActivity(intent);
+                }
             }
         });
     }
