@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -36,6 +37,8 @@ public class SonginplaylistActivity extends AppCompatActivity implements Adapter
     public static String idplaylist;
     Button btnChinhSuaPl;
     Intent intent;
+    TextView tvTieuDe;
+    ImageView imgBack;
 
     public static boolean CHONTHEMBAIHATVAOPLAYLIST=false;
     @Override
@@ -73,6 +76,10 @@ public class SonginplaylistActivity extends AppCompatActivity implements Adapter
         LayDanhSachBaiHatTrongPlaylist();
         adapterBaiHat.notifyDataSetChanged();
 
+        tvTieuDe = (TextView)findViewById(R.id.tvTieuDe);
+        tvTieuDe.setText("Danh sách bài hát");
+        imgBack = (ImageView)findViewById(R.id.imageView4);
+
     }
 
     private void AddEvents() {
@@ -85,6 +92,12 @@ public class SonginplaylistActivity extends AppCompatActivity implements Adapter
                 Intent intent = new Intent(SonginplaylistActivity.this,AddmusicActivity.class);
                 intent.putExtra("idplaylist",idplaylist);
                 startActivity(intent);
+            }
+        });
+        imgBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
             }
         });
 
@@ -250,7 +263,18 @@ public class SonginplaylistActivity extends AppCompatActivity implements Adapter
             case R.id.iv_next:
                 nextMusic();
                 break;
-
+            case R.id.iv_repeat:
+                if (MainActivity.repeat==0)
+                {
+                    Toast.makeText(this, "Bạn đã chọn lặp lại bài hát", Toast.LENGTH_SHORT).show();
+                    MainActivity.repeat=1;
+                }
+                else
+                {
+                    Toast.makeText(this, "Bạn bỏ chọn lặp lại bài hát", Toast.LENGTH_SHORT).show();
+                    MainActivity.repeat=0;
+                }
+                break;
             case R.id.iv_play:
                 if (MainActivity.musicPlayer.getState() == PLAYER_PLAY) {
                     MainActivity.ivPlay.setImageResource(R.drawable.play);
@@ -325,6 +349,10 @@ public class SonginplaylistActivity extends AppCompatActivity implements Adapter
 
     private void nextMusic() {
         MainActivity.position++;
+        if (MainActivity.repeat==1)
+        {
+            MainActivity.position--;
+        }
         if (MainActivity.position >= MainActivity.paths.size()) {
             MainActivity.position = 0;
         }

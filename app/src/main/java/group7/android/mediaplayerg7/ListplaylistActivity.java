@@ -31,6 +31,8 @@ public class ListplaylistActivity extends AppCompatActivity {
     public static PlaylistAdapter adapterPlaylist;
     ImageView btnAddPlaylist;
     TextView txtThemPlaylist;
+    TextView tvTieuDe;
+    ImageView imgBack;
     public static int countrow=0;
     public static boolean DA_MO_PLAYLIST = false;
     @Override
@@ -54,6 +56,10 @@ public class ListplaylistActivity extends AppCompatActivity {
         LayDanhSachPlaylistTuCSDL();
 
         SonginplaylistActivity.CHONTHEMBAIHATVAOPLAYLIST = false;
+
+        tvTieuDe = (TextView)findViewById(R.id.tvTieuDe);
+        tvTieuDe.setText("Danh sách Playlist");
+        imgBack = (ImageView)findViewById(R.id.imageView4);
     }
 
     private void AddEvents() {
@@ -79,6 +85,12 @@ public class ListplaylistActivity extends AppCompatActivity {
                     intent.putExtra("idplaylist", playlist.getIdplaylist());
                     startActivity(intent);
                 }
+            }
+        });
+        imgBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
             }
         });
     }

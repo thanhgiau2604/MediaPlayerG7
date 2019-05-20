@@ -26,7 +26,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import static group7.android.mediaplayerg7.MusicPlayer.PLAYER_PLAY;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -62,12 +61,15 @@ public class MainActivity extends AppCompatActivity {
     public static ImageView ivPlay;
     public static ImageView ivNext;
     public static ImageView ivRepeat;
+    public static TextView tvTieuDe;
     public static int timeProcess;
     public static int timeTotal;
     public static boolean isRunning;
     public static int UPDATE_TIME = 1;
     public static int timeCurrent;
     public static int position;
+
+    public static int repeat = 0;
 
     public static String TEN_BAI_HAT, TEN_CA_SI, TOTAL_TIME;
 
@@ -172,6 +174,7 @@ public class MainActivity extends AppCompatActivity {
         txtListSong = (TextView)findViewById(R.id.txtlistsong);
         txtListPlaylist = (TextView)findViewById(R.id.txtlistplaylist);
         txtListFSong = (TextView) findViewById(R.id.txtlistfsong);
+        tvTieuDe = (TextView)findViewById(R.id.tvTieuDe);
         musicPlayer = new MusicPlayer();
 
         MainActivity.notificationLayout =
@@ -180,10 +183,13 @@ public class MainActivity extends AppCompatActivity {
         MainActivity.notificationManager =
                 (android.app.NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
+
+
         notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setSmallIcon(R.drawable.music)
                 .setCustomContentView(notificationLayout)
+                .setPriority(NotificationManager.IMPORTANCE_HIGH)
                 .build();
     }
 

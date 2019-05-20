@@ -149,6 +149,10 @@ public class NotificationReceiver extends BroadcastReceiver {
 
     private void nextMusic() {
         MainActivity.position++;
+        if (MainActivity.repeat==1)
+        {
+            MainActivity.position--;
+        }
         if (MainActivity.position >= MainActivity.paths.size()) {
             MainActivity.position = 0;
         }

@@ -34,6 +34,10 @@ public class ListfavsongActivity extends AppCompatActivity implements AdapterVie
     public static ArrayList<Music> dsBaiHatYeuThich;
     public static MusicAdapter adapterBaiHatYeuThich;
 
+    TextView tvTieuDe;
+
+    ImageView imgBack;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,8 +63,15 @@ public class ListfavsongActivity extends AppCompatActivity implements AdapterVie
         }
     }
 
-    private void AddEvents() {
+    private void AddEvents()
+    {
         initListeners();
+        imgBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
     }
 
     private void AddControls() {
@@ -73,6 +84,10 @@ public class ListfavsongActivity extends AppCompatActivity implements AdapterVie
 
         LayDuLieuBaiHatYeuThichTuCSDL();
         adapterBaiHatYeuThich.notifyDataSetChanged();
+
+        tvTieuDe = (TextView)findViewById(R.id.tvTieuDe);
+        tvTieuDe.setText("Danh sách bài hát yêu thích");
+        imgBack = (ImageView)findViewById(R.id.imageView4);
     }
 
     private void initListeners() {
@@ -232,7 +247,18 @@ public class ListfavsongActivity extends AppCompatActivity implements AdapterVie
             case R.id.iv_next:
                 nextMusic();
                 break;
-
+            case R.id.iv_repeat:
+                if (MainActivity.repeat==0)
+                {
+                    Toast.makeText(this, "Bạn đã chọn lặp lại bài hát", Toast.LENGTH_SHORT).show();
+                    MainActivity.repeat=1;
+                }
+                else
+                {
+                    Toast.makeText(this, "Bạn bỏ chọn lặp lại bài hát", Toast.LENGTH_SHORT).show();
+                    MainActivity.repeat=0;
+                }
+                break;
             case R.id.iv_play:
                 if (MainActivity.musicPlayer.getState() == PLAYER_PLAY) {
                     MainActivity.ivPlay.setImageResource(R.drawable.play);
@@ -307,6 +333,10 @@ public class ListfavsongActivity extends AppCompatActivity implements AdapterVie
 
     private void nextMusic() {
         MainActivity.position++;
+        if (MainActivity.repeat==1)
+        {
+            MainActivity.position--;
+        }
         if (MainActivity.position >= MainActivity.paths.size()) {
             MainActivity.position = 0;
         }
